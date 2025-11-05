@@ -1,0 +1,3 @@
+local CustomSharedLib = {}
+
+return CustomSharedLib
