@@ -1,55 +1,60 @@
 local TweenService = game:GetService("TweenService")
 local TweenerClass = {}
-TweenerClass.__index = TweenerClass
 
-function TweenerClass.Create(time: number, defaultStyle: Enum.EasingStyle, defaultDirection: Enum.EasingDirection)
-	local self = setmetatable({}, TweenerClass)
-	self.defaultTime = time
-	self.defaultStyle = defaultStyle
-	self.defaultDirection = defaultDirection
-	return self
+export type Params = {
+	DefaultTime: number,
+	DefaultStyle: Enum.EasingStyle,
+	DefaultDirection: Enum.EasingDirection,
+}
+
+function TweenerClass:CreateParams(
+	time: number,
+	defaultStyle: Enum.EasingStyle,
+	defaultDirection: Enum.EasingDirection
+): Params
+	return {
+		DefaultTime = time,
+		DefaultStyle = defaultStyle,
+		DefaultDirection = defaultDirection,
+	}
 end
 
 function TweenerClass:TweenTable(
+	params: Params,
 	tableToUse: { [any]: any },
 	yield: boolean?,
-	time: number?,
-	style: Enum.EasingStyle?,
-	direction: Enum.EasingDirection?
+	overwriteTime: number?,
+	overwriteStyle: Enum.EasingStyle?,
+	overwriteDirection: Enum.EasingDirection?
 )
-	time = time or self.DefaultTime
-	style = style or self.DefaultStyle
-	direction = direction or self.DefaultDirection
+	local timeToUse: number = overwriteTime or params.DefaultTime
+	local styleToUse: Enum.EasingStyle = overwriteStyle or params.DefaultStyle
+	local directionToUse: Enum.EasingDirection = overwriteDirection or params.DefaultDirection
 	for index: any, value: any in tableToUse do
-		TweenService:Create(index, TweenInfo.new(time, style, direction), value):Play()
+		TweenService:Create(index, TweenInfo.new(timeToUse, styleToUse, directionToUse), value):Play()
 	end
 	if yield then
-		task.wait(time)
+		task.wait(timeToUse)
 	end
 	return
 end
 
 function TweenerClass:TweenOnce(
+	params: Params,
 	element: { [any]: any },
 	yield: boolean?,
-	time: number?,
-	style: Enum.EasingStyle?,
-	direction: Enum.EasingDirection?
+	overwriteTime: number?,
+	overwriteStyle: Enum.EasingStyle?,
+	overwriteDirection: Enum.EasingDirection?
 )
-	time = time or self.DefaultTime
-	style = style or self.DefaultStyle
-	direction = direction or self.DefaultDirection
-	TweenService:Create(element[1], TweenInfo.new(time, style, direction), element[2]):Play()
+	local timeToUse: number = overwriteTime or params.DefaultTime
+	local styleToUse: Enum.EasingStyle = overwriteStyle or params.DefaultStyle
+	local directionToUse: Enum.EasingDirection = overwriteDirection or params.DefaultDirection
+	TweenService:Create(element[1], TweenInfo.new(timeToUse, styleToUse, directionToUse), element[2]):Play()
 	if yield then
-		task.wait(time)
+		task.wait(timeToUse)
 	end
 	return
-end
-
-function TweenerClass:Destroy()
-	setmetatable(self, nil)
-	table.clear(self)
-	table.freeze(self)
 end
 
 return TweenerClass

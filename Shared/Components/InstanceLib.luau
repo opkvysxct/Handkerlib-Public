@@ -19,7 +19,7 @@ function InstanceLib:CreateSound(
 	local toDelete: Attachment
 	local sound: Sound
 	if typeof(where) == "Vector3" then
-		local newWhere: Attachment = self:CreatePoint(where)
+		local newWhere: Attachment = InstanceLib:CreatePoint(where)
 		where = newWhere
 		toDelete = newWhere
 	end
@@ -43,7 +43,7 @@ function InstanceLib:CreateSound(
 end
 
 function InstanceLib:CreateAndPlaySound(where: Instance | Vector3, specs: any, minTime: number?)
-	local sound: Sound, toDelete: Attachment? = self:CreateSound(where, specs, minTime)
+	local sound: Sound, toDelete: Attachment? = InstanceLib:CreateSound(where, specs, minTime)
 	sound:Play()
 	if toDelete then
 		Debris:AddItem(where, sound.TimeLength + (minTime or 1))
@@ -62,7 +62,7 @@ function InstanceLib:CreateAndEmitParticle(
 	local toDelete: Attachment
 	local newParticle: ParticleEmitter
 	if typeof(where) == "Vector3" then
-		local newWhere: Attachment = self:CreatePoint(where)
+		local newWhere: Attachment = InstanceLib:CreatePoint(where)
 		where = newWhere
 		toDelete = newWhere
 	end
@@ -94,14 +94,14 @@ function InstanceLib:CreateMotor6D(first: BasePart, second: BasePart, parent: In
 	return motor6D
 end
 
-function InstanceLib:PutToParallel(scriptToUse: Types.Scripts, where: Instance, count: number?): Types.ThreadTable
+function InstanceLib:PutToParallel(scriptToUse: BaseScript, where: Instance, count: number?): Types.ThreadTable
 	local threads: Types.ThreadTable = nil
 	for i = 1, count or 1 do
 		local actor: Actor = Instance.new("Actor")
 		actor.Name = scriptToUse.Name .. "_Actor"
 		actor.Parent = where
 
-		local newScriptToUse = scriptToUse:Clone() :: Types.Scripts
+		local newScriptToUse = scriptToUse:Clone() :: BaseScript
 		newScriptToUse.Parent = actor
 
 		table.insert(threads, {

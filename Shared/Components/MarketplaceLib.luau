@@ -5,7 +5,7 @@ local MarketplaceLib = {}
 function MarketplaceLib:CheckPlayerGamepass(id: number, prompt: boolean, player: Player?): boolean
 	local playerToUse: Player = PlayerLib:IsPlayer(player)
 	local hasPass: boolean = false
-	local success: boolean, message = pcall(function()
+	local success: boolean, message: string = pcall(function()
 		hasPass = MarketplaceService:UserOwnsGamePassAsync(playerToUse.UserId, id)
 	end)
 	if not success then

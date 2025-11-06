@@ -28,36 +28,4 @@ function TesterLib:ValidateString(stringToCheck: string, maxLenght: number?): bo
 	return true
 end
 
---[[function TesterLib:ValidateTable(listToCheck: any, templateList: any, stringLimit: number?): boolean
-	for index: any, value: any in listToCheck do
-		local corresponding = templateList[index] -- change this
-		if not corresponding then
-			return false
-		end
-		if typeof(value) ~= typeof(corresponding) then
-			return false
-		end
-		for _, additionalValue: any in { index, value } do
-			if typeof(additionalValue) == "number" then
-				local success: boolean = self:ValidateNumber(value)
-				if not success then
-					return false
-				end
-			elseif typeof(additionalValue) == "string" then
-				local success: boolean = self:ValidateString(value, stringLimit or 256)
-				if not success then
-					return false
-				end
-			end
-		end
-		if typeof(corresponding) == "table" then
-			local success: boolean = self:ValidateTable(value, corresponding)
-			if not success then
-				return false
-			end
-		end
-	end
-	return true
-end]]
-
 return TesterLib

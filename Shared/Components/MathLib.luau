@@ -17,7 +17,11 @@ function MathLib:Lerp(a: number, b: number, t: number): number
 end
 
 function MathLib:LerpVector3(v3: Vector3, goal: Vector3, alpha: number): Vector3
-	return Vector3.new(self:Lerp(v3.X, goal.X, alpha), self:Lerp(v3.Y, goal.Y, alpha), self:Lerp(v3.Z, goal.Z, alpha))
+	return Vector3.new(
+		MathLib:Lerp(v3.X, goal.X, alpha),
+		MathLib:Lerp(v3.Y, goal.Y, alpha),
+		MathLib:Lerp(v3.Z, goal.Z, alpha)
+	)
 end
 
 return MathLib

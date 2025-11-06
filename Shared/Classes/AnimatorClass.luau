@@ -1,79 +1,80 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local InstanceLib = require(ReplicatedStorage.Handkerlib.Shared.Components.InstanceLib)
 local AnimatorClass = {}
-AnimatorClass.__index = AnimatorClass
 
-function AnimatorClass.Create(animator: Animator)
-	local self = setmetatable({}, AnimatorClass)
-	self.anims = {
-		uncategorized = {},
-		categorized = {},
+export type Params = {
+	Anims: {
+		Uncategorized: {},
+		Categorized: {},
+	},
+	Animator: Animator,
+}
+
+function AnimatorClass:CreateParams(animator: Animator): Params
+	return {
+		Anims = {
+			Uncategorized = {},
+			Categorized = {},
+		},
+		Animator = animator,
 	}
-	self.animator = animator
-	return self
 end
 
-function AnimatorClass:NewCategory(categoryName: string)
-	self.anims.categorized[categoryName] = {}
+function AnimatorClass:NewCategory(params: Params, categoryName: string)
+	params.Anims.Categorized[categoryName] = {}
 end
 
-function AnimatorClass:RemoveCategory(categoryName: string)
-	if not self.anims.categorized[categoryName] then
+function AnimatorClass:RemoveCategory(params: Params, categoryName: string)
+	if not params.Anims.Categorized[categoryName] then
 		error("[H] No category with given name: " .. categoryName)
 	end
-	self.anims.categorized[categoryName] = nil
+	params.Anims.Categorized[categoryName] = nil
 end
 
-function AnimatorClass:InsertNew(anim: Animation | number, animName: string, categoryName: string?)
+function AnimatorClass:InsertNew(params: Params, anim: Animation | number, animName: string, categoryName: string?)
 	local function DoLogic(animFianl: AnimationTrack)
 		if categoryName then
-			if not self.anims.categorized[categoryName] then
+			if not params.Anims.Categorized[categoryName] then
 				error("[H] No category with given name: " .. categoryName)
 			end
-			self.anims.categorized[categoryName][animName] = animFianl
+			params.Anims.Categorized[categoryName][animName] = animFianl
 		else
-			self.anims.uncategorized[animName] = animFianl
+			params.Anims.Uncategorized[animName] = animFianl
 		end
 	end
 	if typeof(anim) == "number" then
-		DoLogic(InstanceLib:CreateAndLoadAnimation(anim, self.animator))
+		DoLogic(InstanceLib:CreateAndLoadAnimation(anim, params.Animator))
 	elseif typeof(anim) == "Animation" then
-		DoLogic(self.animator:LoadAnimation(anim))
+		DoLogic(params.Animator:LoadAnimation(anim))
 	else
 		error("[H] Invalid type for : " .. anim)
 	end
 end
 
-function AnimatorClass:RemoveAnim(animName: string, categoryName: string?)
+function AnimatorClass:RemoveAnim(params: Params, animName: string, categoryName: string?)
 	if categoryName then
-		self.anims[categoryName][animName] = nil
+		params.Anims[categoryName][animName] = nil
 	else
-		self.anims.uncategorized[animName] = nil
+		params.Anims.Uncategorized[animName] = nil
 	end
 end
 
-function AnimatorClass:GetAnimation(categoryName: string, animationName: string): AnimationTrack
-	if not self.anims.categorized[categoryName] then
+function AnimatorClass:GetAnimation(params: Params, categoryName: string, animationName: string): AnimationTrack
+	if not params.Anims.Categorized[categoryName] then
 		error("[H] No category with given name: " .. categoryName)
 	end
-	if not self.anims.categorized[categoryName][animationName] then
+	if not params.Anims.Categorized[categoryName][animationName] then
 		error("[H] No animation with given name: " .. animationName)
 	end
-	return self.anims.categorized[categoryName][animationName]
+	return params.Anims.Categorized[categoryName][animationName]
 end
 
-function AnimatorClass:GetRandom(categoryName: string): AnimationTrack
+function AnimatorClass:GetRandom(params: Params, categoryName: string): AnimationTrack
 	local allFromCategory = {}
-	for name: string, anim: AnimationTrack in self.anims.categorized[categoryName] do -- from string to number conversion.
+	for name: string, anim: AnimationTrack in params.Anims.Categorized[categoryName] do -- from string to number conversion.
 		table.insert(allFromCategory, anim)
 	end
 	return allFromCategory[math.random(1, #allFromCategory)]
-end
-
-function AnimatorClass:Destroy()
-	setmetatable(self, nil)
-	table.clear(self)
-	table.freeze(self)
 end
 
 return AnimatorClass

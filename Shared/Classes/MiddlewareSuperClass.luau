@@ -1,16 +1,19 @@
 local MiddlewareSuperClass = {}
-MiddlewareSuperClass.__index = MiddlewareSuperClass
 
-type MiddlewareFunction = ({ any }) -> any | nil
+type MiddlewareFunction = ({ any }) -> any?
 
-function MiddlewareSuperClass.Create()
-	local self = setmetatable({}, MiddlewareSuperClass)
-	self._middlewareConnections = {}
-	return self
+export type Params = {
+	MiddlewareConnections: { [number]: MiddlewareFunction },
+}
+
+function MiddlewareSuperClass:CreateParams(): Params
+	return {
+		MiddlewareConnections = {},
+	}
 end
 
-function MiddlewareSuperClass:Run(parameters: { any }): { any }
-	for index: number, mConnection: MiddlewareFunction in self._middlewareConnections do
+function MiddlewareSuperClass:Run(params: Params, parameters: { any }): { any }
+	for index: number, mConnection: MiddlewareFunction in params.MiddlewareConnections do
 		local res: { any }? = mConnection(parameters)
 		if res then
 			parameters = res
@@ -19,20 +22,20 @@ function MiddlewareSuperClass:Run(parameters: { any }): { any }
 	return parameters
 end
 
-function MiddlewareSuperClass:Connect(conIndex: number, conFunc: MiddlewareFunction)
-	for index: number, mConnection: MiddlewareFunction in self._middlewareConnections do
+function MiddlewareSuperClass:Connect(params: Params, conIndex: number, conFunc: MiddlewareFunction)
+	for index: number, mConnection: MiddlewareFunction in params.MiddlewareConnections do
 		if index == conIndex then
 			error("[H] MiddlewareConnection with same index already exists.")
 			return false
 		end
 	end
-	self._middlewareConnections[conIndex] = conFunc
+	params.MiddlewareConnections[conIndex] = conFunc
 	return true
 end
 
-function MiddlewareSuperClass:Disconnect(conIndex: number)
+function MiddlewareSuperClass:Disconnect(params: Params, conIndex: number)
 	local toDelete
-	for index: number, mConnection: MiddlewareFunction in self._middlewareConnections do
+	for index: number, mConnection: MiddlewareFunction in params.MiddlewareConnections do
 		if index == conIndex then
 			toDelete = index
 			break
@@ -42,14 +45,8 @@ function MiddlewareSuperClass:Disconnect(conIndex: number)
 		error("[H] Didn't found MiddelwareConnection with that index")
 		return false
 	end
-	table.remove(self._middlewareConnections, toDelete)
+	table.remove(params.MiddlewareConnections, toDelete)
 	return true
-end
-
-function MiddlewareSuperClass:Destroy()
-	setmetatable(self, nil)
-	table.clear(self)
-	table.freeze(self)
 end
 
 return MiddlewareSuperClass

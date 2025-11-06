@@ -1,10 +1,12 @@
 local ParallelClass = {}
-ParallelClass.__index = ParallelClass
 
-function ParallelClass.Create()
-	local self = setmetatable({}, ParallelClass)
-	self.threads = {}
-	return self
+-- WIP
+
+function ParallelClass:CreateParams(idString: string, moduleToUse: BaseScript)
+	self._threads = {}
+	self.idString = idString
+	self.moduleToUse = moduleToUse
+	return
 end
 
 function ParallelClass:Destroy()
