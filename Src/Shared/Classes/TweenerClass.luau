@@ -57,4 +57,9 @@ function TweenerClass:TweenOnce(
 	return
 end
 
+function TweenerClass:Clear(params: Params)
+	table.clear(params)
+	table.freeze(params)
+end
+
 return TweenerClass

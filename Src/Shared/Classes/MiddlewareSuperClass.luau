@@ -49,4 +49,9 @@ function MiddlewareSuperClass:Disconnect(params: Params, conIndex: number)
 	return true
 end
 
+function MiddlewareSuperClass:Clear(params: Params)
+	table.clear(params)
+	table.freeze(params)
+end
+
 return MiddlewareSuperClass

@@ -77,4 +77,9 @@ function AnimatorClass:GetRandom(params: Params, categoryName: string): Animatio
 	return allFromCategory[math.random(1, #allFromCategory)]
 end
 
+function AnimatorClass:Clear(params: Params)
+	table.clear(params)
+	table.freeze(params)
+end
+
 return AnimatorClass

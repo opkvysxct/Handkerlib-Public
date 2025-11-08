@@ -66,4 +66,9 @@ function ReceiptProcessorClass:_Run(params: Params)
 	)
 end
 
+function MarketplaceService:Clear(params: Params)
+	table.clear(params)
+	table.freeze(params)
+end
+
 return ReceiptProcessorClass

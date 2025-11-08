@@ -14,8 +14,7 @@ end
 
 function SpringClass:Progress(deltaTime: number) end
 
-function SpringClass:Destroy()
-	setmetatable(self, nil)
+function SpringClass:Clear()
 	table.clear(self)
 	table.freeze(self)
 end
