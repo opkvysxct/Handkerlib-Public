@@ -1,5 +1,8 @@
 -- VYSX 2025
--- VERSION 0.10.0
+-- VERSION 0.11.0
+
+-- Handkerlib uses errors and asserts (with expection of processing platform purchases),
+-- which will halt execution of the code instead of warns if something goes wrong, please be aware of it.
 
 local Handkerlib = {}
 
