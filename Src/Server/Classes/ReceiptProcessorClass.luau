@@ -3,33 +3,34 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Types = require(ReplicatedStorage.Handkerlib.Types)
 local ReceiptProcessorClass = {}
+ReceiptProcessorClass.__index = ReceiptProcessorClass
 
 type ProductFunction = (receiptInfo: Types.ReceiptInfo, player: Player) -> nil
 type GamepassFunction = (gamepassId: number, player: Player) -> nil
 
-export type Params = {
+type Params = {
 	Products: { [number]: ProductFunction },
 	Gamepasses: { [number]: GamepassFunction },
 }
 
-function ReceiptProcessorClass:Create(): Params
-	local params: Params = {
-		Products = {},
-		Gamepasses = {},
-	}
-	ReceiptProcessorClass:_Run(params)
-	return params
+export type Class = typeof(setmetatable({} :: Params, ReceiptProcessorClass))
+
+function ReceiptProcessorClass.Create(): Class
+	local self = {}
+	self.Products = {}
+	self.Gamepasses = {}
+	return setmetatable(self, ReceiptProcessorClass)
 end
 
-function ReceiptProcessorClass:AddProductListener(params: Params, id: number, funcAfter: ProductFunction)
-	params.Products[id] = funcAfter
+function ReceiptProcessorClass.AddProductListener(self: Class, id: number, funcAfter: ProductFunction)
+	self.Products[id] = funcAfter
 end
 
-function ReceiptProcessorClass:AddGamepassListener(params: Params, id: number, funcAfter: GamepassFunction)
-	params.Gamepasses[id] = funcAfter
+function ReceiptProcessorClass.AddGamepassListener(self: Class, id: number, funcAfter: GamepassFunction)
+	self.Gamepasses[id] = funcAfter
 end
 
-function ReceiptProcessorClass:_Run(params: Params)
+function ReceiptProcessorClass.Run(self: Class)
 	MarketplaceService.ProcessReceipt = function(receiptInfo: Types.ReceiptInfo): Enum.ProductPurchaseDecision
 		local userId: number = receiptInfo.PlayerId
 		local productId: number = receiptInfo.ProductId
@@ -39,7 +40,7 @@ function ReceiptProcessorClass:_Run(params: Params)
 			return Enum.ProductPurchaseDecision.NotProcessedYet
 		end
 
-		local handler: ProductFunction = params.Products[productId]
+		local handler: ProductFunction = self.Products[productId]
 		local success: boolean = pcall(handler, receiptInfo, player)
 		if success then
 			print("[H] Product Granted", player, productId)
@@ -55,7 +56,7 @@ function ReceiptProcessorClass:_Run(params: Params)
 			if not wasPurchased then
 				return
 			end
-			local handler: GamepassFunction = params.Gamepasses[gamepassId]
+			local handler: GamepassFunction = self.Gamepasses[gamepassId]
 			local success: boolean = pcall(handler, gamepassId, player)
 			if success then
 				print("[H] Purchase Granted", player, gamepassId)
@@ -66,9 +67,10 @@ function ReceiptProcessorClass:_Run(params: Params)
 	)
 end
 
-function MarketplaceService:Clear(params: Params)
-	table.clear(params)
-	table.freeze(params)
+function ReceiptProcessorClass.Clear(self: Class)
+	setmetatable(self :: any, nil)
+	table.clear(self :: any)
+	table.freeze(self :: any)
 end
 
 return ReceiptProcessorClass

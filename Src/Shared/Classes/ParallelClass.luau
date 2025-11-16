@@ -1,20 +1,22 @@
 local ParallelClass = {}
+ParallelClass.__index = ParallelClass
 
 type Thread = {
 	UsedScript: BaseScript,
 	UsedActor: Actor,
 }
 
-export type Params = {
+type Params = {
 	ScriptToUse: BaseScript,
-	_Threads: { Thread },
+	Threads: { Thread },
 }
 
-function ParallelClass:CreateParams(scriptToUse: BaseScript, threads: number, where: Instance?): Params
-	local toReturn: Params = {
-		ScriptToUse = scriptToUse,
-		_Threads = {},
-	}
+export type Class = typeof(setmetatable({} :: Params, ParallelClass))
+
+function ParallelClass.Create(scriptToUse: BaseScript, threads: number, where: Instance?): Class
+	local self = {}
+	self.ScriptToUse = scriptToUse
+	self.Threads = {}
 	for index: number = 1, threads do
 		local createdActor: Actor = Instance.new("Actor", where)
 		createdActor.Name = index .. "_" .. scriptToUse.Name
@@ -24,24 +26,25 @@ function ParallelClass:CreateParams(scriptToUse: BaseScript, threads: number, wh
 			UsedScript = clonedScript,
 			UsedActor = createdActor,
 		}
-		table.insert(toReturn._Threads, thread)
+		table.insert(self.Threads, thread)
 	end
-	return toReturn
+	return setmetatable(self, ParallelClass)
 end
 
-function ParallelClass:SendMessage(params: Params, identificator: string, ...: any)
-	for index: number, thread: Thread in params._Threads do
+function ParallelClass.SendMessage(self: Class, identificator: string, ...: any)
+	for index: number, thread: Thread in self.Threads do
 		thread.UsedActor:SendMessage(identificator, ...)
 	end
 end
 
-function ParallelClass:Clear(params: Params)
-	for index: number, thread: Thread in params._Threads do
+function ParallelClass.Clear(self: Class)
+	for index: number, thread: Thread in self.Threads do
 		thread.UsedScript:Destroy()
 		thread.UsedActor:Destroy()
 	end
-	table.clear(params)
-	table.freeze(params)
+	setmetatable(self :: any, nil)
+	table.clear(self :: any)
+	table.freeze(self :: any)
 end
 
 return ParallelClass
