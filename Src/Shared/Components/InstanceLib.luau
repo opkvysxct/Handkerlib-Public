@@ -1,3 +1,4 @@
+--!strict
 local Debris = game:GetService("Debris")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
@@ -19,7 +20,7 @@ function InstanceLib:CreateSound(
 	local toDelete: Attachment
 	local sound: Sound
 	if typeof(where) == "Vector3" then
-		local newWhere: Attachment = InstanceLib:CreatePoint(where)
+		local newWhere: Attachment = self:CreatePoint(where)
 		where = newWhere
 		toDelete = newWhere
 	end
@@ -35,7 +36,7 @@ function InstanceLib:CreateSound(
 	sound:Play()
 
 	if toDelete then
-		Debris:AddItem(where, sound.TimeLength + (minTime or 1))
+		Debris:AddItem(where :: Instance, sound.TimeLength + (minTime or 1))
 	else
 		Debris:AddItem(sound, sound.TimeLength + (minTime or 1))
 	end
@@ -43,10 +44,10 @@ function InstanceLib:CreateSound(
 end
 
 function InstanceLib:CreateAndPlaySound(where: Instance | Vector3, specs: any, minTime: number?)
-	local sound: Sound, toDelete: Attachment? = InstanceLib:CreateSound(where, specs, minTime)
+	local sound: Sound, toDelete: Attachment? = self:CreateSound(where, specs, minTime)
 	sound:Play()
 	if toDelete then
-		Debris:AddItem(where, sound.TimeLength + (minTime or 1))
+		Debris:AddItem(where :: Instance, sound.TimeLength + (minTime or 1))
 	else
 		Debris:AddItem(sound, sound.TimeLength + (minTime or 1))
 	end
@@ -62,7 +63,7 @@ function InstanceLib:CreateAndEmitParticle(
 	local toDelete: Attachment
 	local newParticle: ParticleEmitter
 	if typeof(where) == "Vector3" then
-		local newWhere: Attachment = InstanceLib:CreatePoint(where)
+		local newWhere: Attachment = self:CreatePoint(where)
 		where = newWhere
 		toDelete = newWhere
 	end
@@ -74,7 +75,7 @@ function InstanceLib:CreateAndEmitParticle(
 	newParticle:Emit(strength)
 
 	if toDelete then
-		Debris:AddItem(where, newParticle.Lifetime.Max + (minTime or 1))
+		Debris:AddItem(where :: Instance, newParticle.Lifetime.Max + (minTime or 1))
 	else
 		Debris:AddItem(newParticle, newParticle.Lifetime.Max + (minTime or 1))
 	end

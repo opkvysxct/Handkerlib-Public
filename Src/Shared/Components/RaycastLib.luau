@@ -1,3 +1,4 @@
+--!strict
 local RaycastLib = {}
 
 function RaycastLib:RaycastLookAt(
@@ -5,14 +6,14 @@ function RaycastLib:RaycastLookAt(
 	from: Vector3,
 	to: Vector3,
 	strength: number
-): RaycastResult<BasePart> | boolean
-	local rayResult: RaycastResult<BasePart>? =
+): RaycastResult?
+	local rayResult: RaycastResult? =
 		workspace:Raycast(from, CFrame.lookAt(from, to).LookVector * strength, raycastParamsToUse)
 
 	if rayResult then
 		return rayResult
 	else
-		return false
+		return nil
 	end
 end
 
@@ -21,13 +22,13 @@ function RaycastLib:RaycastFromTo(
 	from: Vector3,
 	to: Vector3,
 	strength: number
-): RaycastResult<BasePart> | boolean
-	local rayResult: RaycastResult<BasePart>? = workspace:Raycast(from, to * strength, raycastParamsToUse)
+): RaycastResult?
+	local rayResult: RaycastResult? = workspace:Raycast(from, to * strength, raycastParamsToUse)
 
 	if rayResult then
 		return rayResult
 	else
-		return false
+		return nil
 	end
 end
 

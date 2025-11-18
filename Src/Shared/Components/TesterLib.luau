@@ -1,3 +1,4 @@
+--!strict
 local TesterLib = {}
 
 function TesterLib:ValidateNumber(numberToCheck: number, minRange: number?, maxRange: number?): boolean

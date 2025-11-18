@@ -1,11 +1,22 @@
+--!strict
 local Players = game:GetService("Players")
 local PlayerUtilsLib = {}
 
 function PlayerUtilsLib:IsFirstPerson(threshold: number?): boolean
-	if Players.LocalPlayer.Character ~= nil then
-		if Players.LocalPlayer.Character.Head.LocalTransparencyModifier > (threshold or 0.2) then
-			return true
-		end
+	if not Players.LocalPlayer.Character then
+		return false
+	end
+	local head: Instance? = Players.LocalPlayer.Character:FindFirstChild("Head")
+	if not head then
+		return false
+	end
+	if not head:IsA("BasePart") then
+		return false
+	end
+	local camera: Camera = workspace.CurrentCamera
+	local diff = (head.Position - camera.CFrame.Position).Magnitude
+	if diff < (threshold or 0.5) then
+		return true
 	end
 	return false
 end

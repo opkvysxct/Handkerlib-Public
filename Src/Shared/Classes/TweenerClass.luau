@@ -1,3 +1,4 @@
+--!strict
 local TweenService = game:GetService("TweenService")
 local TweenerClass = {}
 TweenerClass.__index = TweenerClass

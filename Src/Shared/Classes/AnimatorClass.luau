@@ -1,3 +1,4 @@
+--!strict
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local InstanceLib = require(ReplicatedStorage.Handkerlib.Shared.Components.InstanceLib)
 local AnimatorClass = {}

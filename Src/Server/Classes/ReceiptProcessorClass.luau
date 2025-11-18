@@ -1,6 +1,8 @@
+--!strict
 local MarketplaceService = game:GetService("MarketplaceService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local StoreSuperClass = require(ReplicatedStorage.Handkerlib.SuperClasses.StoreSuperClass)
 local Types = require(ReplicatedStorage.Handkerlib.Types)
 local ReceiptProcessorClass = {}
 ReceiptProcessorClass.__index = ReceiptProcessorClass
@@ -9,25 +11,17 @@ type ProductFunction = (receiptInfo: Types.ReceiptInfo, player: Player) -> nil
 type GamepassFunction = (gamepassId: number, player: Player) -> nil
 
 type Params = {
-	Products: { [number]: ProductFunction },
-	Gamepasses: { [number]: GamepassFunction },
+	ProductStore: StoreSuperClass.Class,
+	GamepasseStore: StoreSuperClass.Class,
 }
 
 export type Class = typeof(setmetatable({} :: Params, ReceiptProcessorClass))
 
 function ReceiptProcessorClass.Create(): Class
 	local self = {}
-	self.Products = {}
-	self.Gamepasses = {}
+	self.ProductStore = StoreSuperClass.Create()
+	self.GamepasseStore = StoreSuperClass.Create()
 	return setmetatable(self, ReceiptProcessorClass)
-end
-
-function ReceiptProcessorClass.AddProductListener(self: Class, id: number, funcAfter: ProductFunction)
-	self.Products[id] = funcAfter
-end
-
-function ReceiptProcessorClass.AddGamepassListener(self: Class, id: number, funcAfter: GamepassFunction)
-	self.Gamepasses[id] = funcAfter
 end
 
 function ReceiptProcessorClass.Run(self: Class)
@@ -40,7 +34,7 @@ function ReceiptProcessorClass.Run(self: Class)
 			return Enum.ProductPurchaseDecision.NotProcessedYet
 		end
 
-		local handler: ProductFunction = self.Products[productId]
+		local handler: ProductFunction = self.ProductStore:ReturnGivenElement(productId)
 		local success: boolean = pcall(handler, receiptInfo, player)
 		if success then
 			print("[H] Product Granted", player, productId)
@@ -56,7 +50,7 @@ function ReceiptProcessorClass.Run(self: Class)
 			if not wasPurchased then
 				return
 			end
-			local handler: GamepassFunction = self.Gamepasses[gamepassId]
+			local handler: GamepassFunction = self.GamepasseStore:ReturnGivenElement(gamepassId)
 			local success: boolean = pcall(handler, gamepassId, player)
 			if success then
 				print("[H] Purchase Granted", player, gamepassId)

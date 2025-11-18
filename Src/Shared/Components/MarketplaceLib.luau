@@ -1,3 +1,4 @@
+--!strict
 local MarketplaceService = game:GetService("MarketplaceService")
 local PlayerLib = require(script.Parent.PlayerLib)
 local MarketplaceLib = {}
@@ -13,19 +14,17 @@ function MarketplaceLib:CheckPlayerGamepass(id: number, prompt: boolean, player:
 		return false
 	end
 	if prompt == true then
-		MarketplaceService:PromptGamePassPurchase(player, id)
+		MarketplaceService:PromptGamePassPurchase(playerToUse, id)
 	end
 	return hasPass
 end
 
 function MarketplaceLib:PromptProductPurchase(id: number, player: Player?)
-	player = PlayerLib:IsPlayer(player)
-	MarketplaceService:PromptProductPurchase(player, id)
+	MarketplaceService:PromptProductPurchase(PlayerLib:IsPlayer(player), id)
 end
 
 function MarketplaceLib:PromptPremiumPurchase(player: Player?)
-	player = PlayerLib:IsPlayer(player)
-	MarketplaceService:PromptPremiumPurchase(player)
+	MarketplaceService:PromptPremiumPurchase(PlayerLib:IsPlayer(player))
 end
 
 return MarketplaceLib

@@ -1,15 +1,25 @@
+--!strict
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local PlayerLib = {}
 
 function PlayerLib:ReturnPlayerByPart(part: Instance): Player | boolean
-	if part.Parent then
-		if part.Parent:FindFirstChild("Humanoid") then
-			local character: Instance = part.Parent
-			if Players:GetPlayerFromCharacter(character) then
-				return Players:GetPlayerFromCharacter(character)
-			end
+	if not part.Parent then
+		return false
+	end
+	if not part.Parent:FindFirstChild("Humanoid") then
+		return false
+	end
+	local character: Instance = part.Parent
+	if not character:IsA("Model") then
+		return false
+	end
+	if Players:GetPlayerFromCharacter(character) then
+		local player: Player? = Players:GetPlayerFromCharacter(character)
+		if not player then
+			return false
 		end
+		return player
 	end
 	return false
 end

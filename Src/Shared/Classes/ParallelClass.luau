@@ -1,3 +1,4 @@
+--!strict
 local ParallelClass = {}
 ParallelClass.__index = ParallelClass
 

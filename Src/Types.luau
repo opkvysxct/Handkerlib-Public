@@ -1,8 +1,9 @@
+--!strict
 export type GenericFunction = any
 export type GenericClass = any
 export type GenericLoadedModule = any
-export type Remote = RemoteFunction | RemoteEvent | UnreliableRemoteEvent
-export type Scripts = Script | LocalScript | ModuleScript
+export type Remote = RemoteFunction & RemoteEvent & UnreliableRemoteEvent
+export type Scripts = Script & LocalScript & ModuleScript
 
 export type ThreadTable = {
 	Script: ModuleScript,
