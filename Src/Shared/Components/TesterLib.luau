@@ -12,20 +12,14 @@ function TesterLib:ValidateNumber(numberToCheck: number, minRange: number?, maxR
 		return false
 	end
 	if minRange and maxRange then
-		if numberToCheck > maxRange or numberToCheck < minRange then
-			return false
-		end
+		if numberToCheck > maxRange or numberToCheck < minRange then return false end
 	end
 	return true
 end
 
 function TesterLib:ValidateString(stringToCheck: string, maxLenght: number?): boolean
-	if typeof(stringToCheck) ~= "string" then
-		return false
-	end
-	if stringToCheck:len() > (maxLenght or 32) then
-		return false
-	end
+	if typeof(stringToCheck) ~= "string" then return false end
+	if stringToCheck:len() > (maxLenght or 32) then return false end
 	return true
 end
 

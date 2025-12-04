@@ -1,5 +1,6 @@
 --!strict
 local MarketplaceService = game:GetService("MarketplaceService")
+local FormattingLib = require(script.Parent.FormattingLib)
 local PlayerLib = require(script.Parent.PlayerLib)
 local MarketplaceLib = {}
 
@@ -10,12 +11,10 @@ function MarketplaceLib:CheckPlayerGamepass(id: number, prompt: boolean, player:
 		hasPass = MarketplaceService:UserOwnsGamePassAsync(playerToUse.UserId, id)
 	end)
 	if not success then
-		warn("[H]", "Error while checking gamepass ownership", tostring(message))
+		warn(FormattingLib:FormatLogMessage(script, `Error while checking gamepass ownership {tostring(message)}`))
 		return false
 	end
-	if prompt == true then
-		MarketplaceService:PromptGamePassPurchase(playerToUse, id)
-	end
+	if prompt == true then MarketplaceService:PromptGamePassPurchase(playerToUse, id) end
 	return hasPass
 end
 

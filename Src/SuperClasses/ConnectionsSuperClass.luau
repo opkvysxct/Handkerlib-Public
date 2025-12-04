@@ -13,7 +13,7 @@ export type Class = typeof(setmetatable({} :: Params, ConnectionsSuperClass))
 
 function ConnectionsSuperClass.Create(): Class
 	local self = {}
-	self.ConnectionsStore = StoreSuperClass.Create()
+	self.ConnectionsStore = StoreSuperClass.Create("number", "function")
 	return setmetatable(self, ConnectionsSuperClass)
 end
 
@@ -23,7 +23,7 @@ function ConnectionsSuperClass.Run(self: Class, whatChanged: { any })
 	end
 end
 
-function ConnectionsSuperClass.Clear(self: Class)
+function ConnectionsSuperClass.Destroy(self: Class)
 	setmetatable(self :: any, nil)
 	table.clear(self :: any)
 	table.freeze(self :: any)

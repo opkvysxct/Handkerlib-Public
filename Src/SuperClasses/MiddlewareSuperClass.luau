@@ -13,21 +13,19 @@ export type Class = typeof(setmetatable({} :: Params, MiddlewareSuperClass))
 
 function MiddlewareSuperClass.Create(): Class
 	local self = {}
-	self.MiddlewareConnectionsStore = StoreSuperClass.Create()
+	self.MiddlewareConnectionsStore = StoreSuperClass.Create("number", "function")
 	return setmetatable(self, MiddlewareSuperClass)
 end
 
 function MiddlewareSuperClass.Run(self: Class, parameters: { any }): { any }
 	for index: number, mConnection: MiddlewareFunction in self.MiddlewareConnectionsStore:ReturnElements() do
 		local res: { any }? = mConnection(parameters)
-		if res then
-			parameters = res
-		end
+		if res then parameters = res end
 	end
 	return parameters
 end
 
-function MiddlewareSuperClass.Clear(self: Class)
+function MiddlewareSuperClass.Destroy(self: Class)
 	setmetatable(self :: any, nil)
 	table.clear(self :: any)
 	table.freeze(self :: any)

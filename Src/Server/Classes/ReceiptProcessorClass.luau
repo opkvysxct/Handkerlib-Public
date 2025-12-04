@@ -1,9 +1,9 @@
 --!strict
 local MarketplaceService = game:GetService("MarketplaceService")
 local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local StoreSuperClass = require(ReplicatedStorage.Handkerlib.SuperClasses.StoreSuperClass)
-local Types = require(ReplicatedStorage.Handkerlib.Types)
+local FormattingLib = require(script.Parent.Parent.Parent.Shared.Components.FormattingLib)
+local StoreSuperClass = require(script.Parent.Parent.Parent.SuperClasses.StoreSuperClass)
+local Types = require(script.Parent.Parent.Parent.Types)
 local ReceiptProcessorClass = {}
 ReceiptProcessorClass.__index = ReceiptProcessorClass
 
@@ -19,8 +19,8 @@ export type Class = typeof(setmetatable({} :: Params, ReceiptProcessorClass))
 
 function ReceiptProcessorClass.Create(): Class
 	local self = {}
-	self.ProductStore = StoreSuperClass.Create()
-	self.GamepasseStore = StoreSuperClass.Create()
+	self.ProductStore = StoreSuperClass.Create("number", "function")
+	self.GamepasseStore = StoreSuperClass.Create("number", "function")
 	return setmetatable(self, ReceiptProcessorClass)
 end
 
@@ -30,38 +30,32 @@ function ReceiptProcessorClass.Run(self: Class)
 		local productId: number = receiptInfo.ProductId
 
 		local player: Player? = Players:GetPlayerByUserId(userId)
-		if not player then
-			return Enum.ProductPurchaseDecision.NotProcessedYet
-		end
+		if not player then return Enum.ProductPurchaseDecision.NotProcessedYet end
 
 		local handler: ProductFunction = self.ProductStore:ReturnGivenElement(productId)
 		local success: boolean = pcall(handler, receiptInfo, player)
 		if success then
-			print("[H] Product Granted", player, productId)
+			print(FormattingLib:FormatLogMessage(script, `Product Granted {productId} for {player.Name}`))
 			return Enum.ProductPurchaseDecision.PurchaseGranted
 		else
-			warn("[H] Failed to process receipt:", receiptInfo)
+			warn(FormattingLib:FormatLogMessage(script, `Failed to process receipt: {receiptInfo.ProductId} for {receiptInfo.PlayerId}`))
 			return Enum.ProductPurchaseDecision.NotProcessedYet
 		end
 	end
 
-	MarketplaceService.PromptGamePassPurchaseFinished:Connect(
-		function(player: Player, gamepassId: number, wasPurchased: boolean)
-			if not wasPurchased then
-				return
-			end
-			local handler: GamepassFunction = self.GamepasseStore:ReturnGivenElement(gamepassId)
-			local success: boolean = pcall(handler, gamepassId, player)
-			if success then
-				print("[H] Purchase Granted", player, gamepassId)
-			else
-				warn("[H] Failed to process receipt:", gamepassId)
-			end
+	MarketplaceService.PromptGamePassPurchaseFinished:Connect(function(player: Player, gamepassId: number, wasPurchased: boolean)
+		if not wasPurchased then return end
+		local handler: GamepassFunction = self.GamepasseStore:ReturnGivenElement(gamepassId)
+		local success: boolean = pcall(handler, gamepassId, player)
+		if success then
+			print(FormattingLib:FormatLogMessage(script, `Purchase Granted for {player.Name} - {gamepassId}`))
+		else
+			warn(FormattingLib:FormatLogMessage(script, `Failed to process receipt: {gamepassId}`))
 		end
-	)
+	end)
 end
 
-function ReceiptProcessorClass.Clear(self: Class)
+function ReceiptProcessorClass.Destroy(self: Class)
 	setmetatable(self :: any, nil)
 	table.clear(self :: any)
 	table.freeze(self :: any)

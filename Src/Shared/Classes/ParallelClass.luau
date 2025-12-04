@@ -8,18 +8,19 @@ type Thread = {
 }
 
 type Params = {
-	ScriptToUse: BaseScript,
-	Threads: { Thread },
+	_ScriptToUse: BaseScript,
+	_Threads: { Thread },
 }
 
 export type Class = typeof(setmetatable({} :: Params, ParallelClass))
 
-function ParallelClass.Create(scriptToUse: BaseScript, threads: number, where: Instance?): Class
+function ParallelClass.Create(scriptToUse: BaseScript, threads: number, where: Instance): Class
 	local self = {}
-	self.ScriptToUse = scriptToUse
-	self.Threads = {}
+	self._ScriptToUse = scriptToUse
+	self._Threads = {}
 	for index: number = 1, threads do
-		local createdActor: Actor = Instance.new("Actor", where)
+		local createdActor: Actor = Instance.new("Actor")
+		createdActor.Parent = where
 		createdActor.Name = index .. "_" .. scriptToUse.Name
 		local clonedScript: BaseScript = scriptToUse:Clone()
 		clonedScript.Parent = createdActor
@@ -27,19 +28,19 @@ function ParallelClass.Create(scriptToUse: BaseScript, threads: number, where: I
 			UsedScript = clonedScript,
 			UsedActor = createdActor,
 		}
-		table.insert(self.Threads, thread)
+		table.insert(self._Threads, thread)
 	end
 	return setmetatable(self, ParallelClass)
 end
 
 function ParallelClass.SendMessage(self: Class, identificator: string, ...: any)
-	for index: number, thread: Thread in self.Threads do
+	for index: number, thread: Thread in self._Threads do
 		thread.UsedActor:SendMessage(identificator, ...)
 	end
 end
 
-function ParallelClass.Clear(self: Class)
-	for index: number, thread: Thread in self.Threads do
+function ParallelClass.Destroy(self: Class)
+	for index: number, thread: Thread in self._Threads do
 		thread.UsedScript:Destroy()
 		thread.UsedActor:Destroy()
 	end

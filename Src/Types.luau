@@ -3,11 +3,15 @@ export type GenericFunction = any
 export type GenericClass = any
 export type GenericLoadedModule = any
 export type Remote = RemoteFunction & RemoteEvent & UnreliableRemoteEvent
-export type Scripts = Script & LocalScript & ModuleScript
+export type Scripts = Script | LocalScript | ModuleScript
 
-export type ThreadTable = {
-	Script: ModuleScript,
-	Actor: Actor,
+export type Character = Model & {
+	PrimaryPart: BasePart,
+	Humanoid: Humanoid & {
+		Animator: Animator,
+	},
+	Head: BasePart,
+	HumanoidRootPart: BasePart,
 }
 
 export type ReceiptInfo = {
