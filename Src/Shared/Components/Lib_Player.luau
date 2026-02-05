@@ -1,10 +1,10 @@
 --!strict
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
-local FormattingLib = require(script.Parent.FormattingLib)
-local PlayerLib = {}
+local Lib_Formatting = require(script.Parent.Lib_Formatting)
+local Lib_Player = {}
 
-function PlayerLib:ReturnPlayerByPart(part: Instance): Player?
+function Lib_Player:ReturnPlayerByPart(part: Instance): Player?
 	local character: Instance = self:ReturnCharacterByPart(part)
 	if not character:IsA("Model") then return end
 	if Players:GetPlayerFromCharacter(character) then
@@ -15,20 +15,20 @@ function PlayerLib:ReturnPlayerByPart(part: Instance): Player?
 	return
 end
 
-function PlayerLib:ReturnCharacterByPart(part: Instance): Instance?
+function Lib_Player:ReturnCharacterByPart(part: Instance): Instance?
 	if part.Parent then
 		if part.Parent:FindFirstChild("Humanoid") then return part.Parent end
 	end
 	return
 end
 
-function PlayerLib:IsPlayer(player: Player?): Player
+function Lib_Player:IsPlayer(player: Player?): Player
 	if RunService:IsClient() then
 		return Players.LocalPlayer
 	else
-		assert(player, FormattingLib:FormatLogMessage(script, `Used IsPlayer() on server without providing a player`))
+		assert(player, Lib_Formatting:FormatLogMessage(script, `Used IsPlayer() on server without providing a player`))
 		return player
 	end
 end
 
-return PlayerLib
+return Lib_Player

@@ -1,10 +1,11 @@
 --!strict
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
-local FormattingLib = require(script.Parent.Parent.Parent.Shared.Components.FormattingLib)
-local PlayerUtilsLib = {}
+local Lib_Formatting = require(ReplicatedStorage.Handkerlib.Shared.Components.Lib_Formatting)
+local CLib_PlayerUtils = {}
 
-function PlayerUtilsLib:IsFirstPerson(threshold: number?): boolean
+function CLib_PlayerUtils:IsFirstPerson(threshold: number?): boolean
 	if not Players.LocalPlayer.Character then return false end
 	local head: Instance? = Players.LocalPlayer.Character:FindFirstChild("Head")
 	if not head then return false end
@@ -15,7 +16,7 @@ function PlayerUtilsLib:IsFirstPerson(threshold: number?): boolean
 	return false
 end
 
-function PlayerUtilsLib:ForceFirstPerson(State: boolean)
+function CLib_PlayerUtils:ForceFirstPerson(State: boolean)
 	if State then
 		Players.LocalPlayer.CameraMode = Enum.CameraMode.LockFirstPerson
 	else
@@ -23,19 +24,19 @@ function PlayerUtilsLib:ForceFirstPerson(State: boolean)
 	end
 end
 
-function PlayerUtilsLib:IsPC(): boolean
+function CLib_PlayerUtils:IsPC(): boolean
 	return UserInputService.MouseEnabled or UserInputService.KeyboardEnabled
 end
 
-function PlayerUtilsLib:IsMobile(): boolean
+function CLib_PlayerUtils:IsMobile(): boolean
 	return UserInputService.AccelerometerEnabled or UserInputService.GyroscopeEnabled
 end
 
-function PlayerUtilsLib:IsConsole(): boolean
+function CLib_PlayerUtils:IsConsole(): boolean
 	return UserInputService.GamepadEnabled
 end
 
-function PlayerUtilsLib:GetPlayerDevice(): string
+function CLib_PlayerUtils:GetPlayerDevice(): string
 	local pc: boolean = self:IsPC()
 	local mobile: boolean = self:IsMobile()
 	local console: boolean = self:IsConsole()
@@ -46,8 +47,8 @@ function PlayerUtilsLib:GetPlayerDevice(): string
 	elseif console then
 		return "CONSOLE"
 	end
-	error(FormattingLib:FormatLogMessage(script, `Couldn't detect player device.`))
+	error(Lib_Formatting:FormatLogMessage(script, `Couldn't detect player device.`))
 	return "UNKNOWN"
 end
 
-return PlayerUtilsLib
+return CLib_PlayerUtils

@@ -2,7 +2,7 @@
 
 ## VYSX 2025
 
-VERSION 0.15.0
+VERSION 0.18.0
 
 ### Handkerlib uses errors and asserts (with expection of processing platform purchases)
 
@@ -11,10 +11,8 @@ VERSION 0.15.0
 ## Example usage with rojo
 
 ```json
-  "$className": "DataModel",
-  "ReplicatedStorage": {
-   "Handkerlib": {
-    "$path": "libs/Handkerlib/Src"
-   }
-  },
+			"Handkerlib": {
+				"$className": "Folder",
+				"$path": "Libs/Handkerlib/Src"
+			},
 ```

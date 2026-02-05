@@ -1,7 +1,7 @@
 --!strict
-local TesterLib = {}
+local Lib_Tester = {}
 
-function TesterLib:ValidateNumber(numberToCheck: number, minRange: number?, maxRange: number?): boolean
+function Lib_Tester:ValidateNumber(numberToCheck: number, minRange: number?, maxRange: number?): boolean
 	if typeof(numberToCheck) ~= "number" then -- Not a number
 		return false
 	end
@@ -17,10 +17,10 @@ function TesterLib:ValidateNumber(numberToCheck: number, minRange: number?, maxR
 	return true
 end
 
-function TesterLib:ValidateString(stringToCheck: string, maxLenght: number?): boolean
+function Lib_Tester:ValidateString(stringToCheck: string, maxLenght: number?): boolean
 	if typeof(stringToCheck) ~= "string" then return false end
 	if stringToCheck:len() > (maxLenght or 32) then return false end
 	return true
 end
 
-return TesterLib
+return Lib_Tester

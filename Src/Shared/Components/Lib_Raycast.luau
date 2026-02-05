@@ -1,7 +1,7 @@
 --!strict
-local RaycastLib = {}
+local Lib_Raycast = {}
 
-function RaycastLib:RaycastLookAt(raycastParamsToUse: RaycastParams, from: Vector3, to: Vector3, strength: number): RaycastResult?
+function Lib_Raycast:RaycastLookAt(raycastParamsToUse: RaycastParams, from: Vector3, to: Vector3, strength: number): RaycastResult?
 	local rayResult: RaycastResult? = workspace:Raycast(from, CFrame.lookAt(from, to).LookVector * strength, raycastParamsToUse)
 
 	if rayResult then
@@ -11,7 +11,7 @@ function RaycastLib:RaycastLookAt(raycastParamsToUse: RaycastParams, from: Vecto
 	end
 end
 
-function RaycastLib:RaycastFromTo(raycastParamsToUse: RaycastParams, from: Vector3, to: Vector3, strength: number): RaycastResult?
+function Lib_Raycast:RaycastFromTo(raycastParamsToUse: RaycastParams, from: Vector3, to: Vector3, strength: number): RaycastResult?
 	local rayResult: RaycastResult? = workspace:Raycast(from, to * strength, raycastParamsToUse)
 
 	if rayResult then
@@ -21,4 +21,4 @@ function RaycastLib:RaycastFromTo(raycastParamsToUse: RaycastParams, from: Vecto
 	end
 end
 
-return RaycastLib
+return Lib_Raycast
